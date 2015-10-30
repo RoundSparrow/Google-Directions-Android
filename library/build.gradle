@@ -1,18 +1,18 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: "com.jfrog.bintray"
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.google.android.gms:play-services-maps:7.5.0'
+    compile 'com.google.android.gms:play-services-maps:8.1.0'
 }
 // This is the library version used when deploying the artifact
 version = "1.0.7"
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         minSdkVersion 10
@@ -27,6 +27,7 @@ def gitUrl = 'https://github.com/jd-alexander/Google-Directions-Android.git'   /
 group = "com.github.jd-alexander"                      // Maven Group ID for the artifact
 
 
+/*
 install {
     repositories.mavenInstaller {
         // This generates POM.xml with proper parameters
@@ -64,7 +65,7 @@ install {
         }
     }
 }
-
+*/
 
 /*
 Only necessary to push to bintray. Causes Travis CI builds to fail.
