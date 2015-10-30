@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     ImageView send;
     @InjectView(R.id.diagOutput0)
     TextView diagOutput0;
+    @InjectView(R.id.diagOutput1)
+    TextView diagOutput1;
+    @InjectView(R.id.cardview)
+    CardView routeEntryCard;
     private String LOG_TAG = "MyActivity";
     protected GoogleApiClient mGoogleApiClient;
     private PlaceAutoCompleteAdapter mAdapter;
@@ -81,29 +86,52 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
 
     public Location currentLocation;
     public boolean locationChangeZoom = true;
+    public boolean routeEntryCardVisible = true;
     public LatLng markerA;
     public MarkerOptions markerAOpts;
 
 
     public void addLocationMarker()
     {
+        String outLogA = "";
         markerA = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         if (markerAOpts != null)
         {
             markerAOpts.position(markerA);
+            outLogA += "R ";
         }
         else {
             markerAOpts = new MarkerOptions().position(markerA);
             markerAOpts.title("You are here!");
             map.addMarker(markerAOpts);
+            outLogA += "N ";
         }
 
         if (start == null)
         {
             start = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             starting.setHint("[Current Location]");
+            outLogA += " CL ";
         }
 
+        if (locationChangeZoom)
+        {
+            outLogA += " Z";
+        }
+        else
+        {
+            outLogA += " NZ";
+        }
+        outLogA += " " + countOLC0;
+
+        diagOutput1.setText(outLogA);
+        diagOutput1.setVisibility(View.VISIBLE);
+        diagOutput1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                diagOutput1.setVisibility(View.GONE);
+            }
+        }, 3500L);
         /*
         start = new LatLng(location.getLatitude(), location.getLongitude());
         end = new LatLng(44.48861858, 11.36779726);
@@ -537,6 +565,18 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
             case R.id.action_zoom_change:
                 locationChangeZoom = ! locationChangeZoom;
                 item.setChecked(locationChangeZoom);
+                break;
+            case R.id.action_route_card:
+                routeEntryCardVisible = ! routeEntryCardVisible;
+                item.setChecked(routeEntryCardVisible);
+                if (routeEntryCardVisible)
+                {
+                    routeEntryCard.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    routeEntryCard.setVisibility(View.GONE);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

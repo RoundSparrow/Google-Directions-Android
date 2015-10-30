@@ -40,6 +40,14 @@
                     android:layout_height="wrap_content"
                     />
 
+                <TextView
+                    android:id="@+id/diagOutput1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#93ff93"
+                    android:visibility="gone"
+                    />
+
                 <AutoCompleteTextView
                     android:id="@+id/start"
                     android:layout_width="fill_parent"

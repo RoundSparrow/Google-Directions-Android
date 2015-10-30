@@ -4,9 +4,20 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 
-    <item android:id="@+id/action_zoom_change" android:title="@string/action_zoom_change"
+    <item android:id="@+id/action_zoom_change"
+        android:title="@string/action_zoom_change"
         android:checkable="true"
         android:checked="true"
-        android:orderInCategory="10" app:showAsAction="never" />
+        android:orderInCategory="10"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/action_route_card"
+        android:title="@string/action_route_card"
+        android:checkable="true"
+        android:checked="true"
+        android:orderInCategory="20"
+        app:showAsAction="never"
+        />
 
 </menu>
