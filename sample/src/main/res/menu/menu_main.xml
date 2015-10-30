@@ -20,4 +20,10 @@
         app:showAsAction="never"
         />
 
+    <item android:id="@+id/action_home_current"
+        android:title="@string/action_home_current"
+        android:orderInCategory="30"
+        app:showAsAction="never"
+        />
+
 </menu>

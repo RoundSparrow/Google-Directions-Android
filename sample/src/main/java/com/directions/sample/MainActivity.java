@@ -149,6 +149,16 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
         */
     }
 
+    public void centerMapOnLocation()
+    {
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+
+        map.moveCamera(center);
+        map.animateCamera(zoom);
+    }
+
+
     /**
      * This activity loads a map and then displays the route and pushpins on it.
      */
@@ -223,15 +233,10 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                         countOLC0++;
                         diagOutput0.setText("LM:LL:OLC " + countOLC0);
 
-                        if (locationChangeZoom) {
-                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-
-                            map.moveCamera(center);
-                            map.animateCamera(zoom);
-                        }
-
                         currentLocation = location;
+                        if (locationChangeZoom) {
+                            centerMapOnLocation();
+                        }
                         addLocationMarker();
                     }
 
@@ -259,15 +264,10 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                         countOLC0++;
                         diagOutput0.setText("LM:LL:RLU:OLC " + countOLC0);
 
-                        if (locationChangeZoom) {
-                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-
-                            map.moveCamera(center);
-                            map.animateCamera(zoom);
-                        }
-
                         currentLocation = location;
+                        if (locationChangeZoom) {
+                            centerMapOnLocation();
+                        }
                         addLocationMarker();
                     }
 
@@ -577,6 +577,9 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                 {
                     routeEntryCard.setVisibility(View.GONE);
                 }
+                break;
+            case R.id.action_home_current:
+                centerMapOnLocation();
                 break;
         }
         return super.onOptionsItemSelected(item);

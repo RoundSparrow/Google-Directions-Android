@@ -9,4 +9,5 @@
     <string name="title_activity_second">SecondActivity</string>
     <string name="action_zoom_change">Zoom Change</string>
     <string name="action_route_card">Route Card</string>
+    <string name="action_home_current">Home Current</string>
 </resources>
