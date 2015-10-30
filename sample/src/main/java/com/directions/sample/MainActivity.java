@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -44,7 +47,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -75,15 +77,26 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     private static final LatLngBounds BOUNDS_JAMAICA = new LatLngBounds(new LatLng(-57.965341647205726, 144.9987719580531),
             new LatLng(72.77492067739843, -9.998857788741589));
 
+    public LatLng startupLocation = new LatLng(18.013610, -77.498803);  // University of developer
 
     public Location currentLocation;
+    public boolean locationChangeZoom = true;
+    public LatLng markerA;
+    public MarkerOptions markerAOpts;
+
 
     public void addLocationMarker()
     {
-        LatLng markerA = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        MarkerOptions markerAOpts = new MarkerOptions().position(markerA);
-        markerAOpts.title("You are here!");
-        map.addMarker(markerAOpts);
+        markerA = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        if (markerAOpts != null)
+        {
+            markerAOpts.position(markerA);
+        }
+        else {
+            markerAOpts = new MarkerOptions().position(markerA);
+            markerAOpts.title("You are here!");
+            map.addMarker(markerAOpts);
+        }
 
         if (start == null)
         {
@@ -152,11 +165,13 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
         });
 
 
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(18.013610, -77.498803));
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+        if (locationChangeZoom) {
+            CameraUpdate center = CameraUpdateFactory.newLatLng(startupLocation);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
-        map.moveCamera(center);
-        map.animateCamera(zoom);
+            map.moveCamera(center);
+            map.animateCamera(zoom);
+        }
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -180,11 +195,13 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                         countOLC0++;
                         diagOutput0.setText("LM:LL:OLC " + countOLC0);
 
-                        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+                        if (locationChangeZoom) {
+                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
-                        map.moveCamera(center);
-                        map.animateCamera(zoom);
+                            map.moveCamera(center);
+                            map.animateCamera(zoom);
+                        }
 
                         currentLocation = location;
                         addLocationMarker();
@@ -214,11 +231,13 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                         countOLC0++;
                         diagOutput0.setText("LM:LL:RLU:OLC " + countOLC0);
 
-                        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
-                        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+                        if (locationChangeZoom) {
+                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+                            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
-                        map.moveCamera(center);
-                        map.animateCamera(zoom);
+                            map.moveCamera(center);
+                            map.animateCamera(zoom);
+                        }
 
                         currentLocation = location;
                         addLocationMarker();
@@ -502,5 +521,24 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.action_zoom_change:
+                locationChangeZoom = ! locationChangeZoom;
+                item.setChecked(locationChangeZoom);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
