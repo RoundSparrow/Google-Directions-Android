@@ -1,10 +1,13 @@
 package com.directions.sample;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
@@ -56,16 +60,53 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     AutoCompleteTextView destination;
     @InjectView(R.id.send)
     ImageView send;
+    @InjectView(R.id.diagOutput0)
+    TextView diagOutput0;
     private String LOG_TAG = "MyActivity";
     protected GoogleApiClient mGoogleApiClient;
     private PlaceAutoCompleteAdapter mAdapter;
     private ProgressDialog progressDialog;
     private ArrayList<Polyline> polylines;
-    private int[] colors = new int[]{R.color.primary_dark,R.color.primary,R.color.primary_light,R.color.accent,R.color.primary_dark_material_light};
+    private int[] colors = new int[]{R.color.primary_dark, R.color.primary, R.color.primary_light, R.color.accent, R.color.primary_dark_material_light};
+
+    private int countOLC0 = 0;
 
 
-    private static final LatLngBounds BOUNDS_JAMAICA= new LatLngBounds(new LatLng(-57.965341647205726, 144.9987719580531),
+    private static final LatLngBounds BOUNDS_JAMAICA = new LatLngBounds(new LatLng(-57.965341647205726, 144.9987719580531),
             new LatLng(72.77492067739843, -9.998857788741589));
+
+
+    public Location currentLocation;
+
+    public void addLocationMarker()
+    {
+        LatLng markerA = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        MarkerOptions markerAOpts = new MarkerOptions().position(markerA);
+        markerAOpts.title("You are here!");
+        map.addMarker(markerAOpts);
+
+        if (start == null)
+        {
+            start = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            starting.setHint("[Current Location]");
+        }
+
+        /*
+        start = new LatLng(location.getLatitude(), location.getLongitude());
+        end = new LatLng(44.48861858, 11.36779726);
+
+        // set to same?
+        LatLng waypoint = new LatLng(18.01455, -77.499333);
+
+        Routing routing = new Routing.Builder()
+                .travelMode(Routing.TravelMode.WALKING)
+                .withListener(MainActivity.this)
+                .waypoints(start, waypoint , end)
+                .build();
+        routing.registerListener(MainActivity.this);
+        routing.execute();
+        */
+    }
 
     /**
      * This activity loads a map and then displays the route and pushpins on it.
@@ -119,17 +160,34 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 5000, 0,
                 new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
 
-                        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
+                        countOLC0++;
+                        diagOutput0.setText("LM:LL:OLC " + countOLC0);
+
+                        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
                         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
                         map.moveCamera(center);
                         map.animateCamera(zoom);
+
+                        currentLocation = location;
+                        addLocationMarker();
                     }
 
                     @Override
@@ -153,12 +211,17 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
                 3000, 0, new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
+                        countOLC0++;
+                        diagOutput0.setText("LM:LL:RLU:OLC " + countOLC0);
+
                         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(),location.getLongitude()));
                         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
                         map.moveCamera(center);
                         map.animateCamera(zoom);
 
+                        currentLocation = location;
+                        addLocationMarker();
                     }
 
                     @Override
@@ -376,7 +439,8 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex)
     {
-        progressDialog.dismiss();
+        if (progressDialog != null)
+            progressDialog.dismiss();
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
