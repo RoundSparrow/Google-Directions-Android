@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Google Directions Sample</string>
 
+    <!-- Populated by gradle -->
+    <string name="map_api_key_string">@string/map_api_key</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 </resources>

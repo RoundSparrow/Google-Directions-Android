@@ -1,17 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.directions.sample"
         minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 23
+        versionCode 2
+        versionName "1.0.2"
     }
     buildTypes {
+        debug {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def apiKey = properties.getProperty('mapapi.key')
+            resValue "string", "map_api_key", apiKey
+            minifyEnabled false
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -21,10 +28,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:appcompat-v7:+'
 
-    // compile project(':library')
-    compile 'com.github.jd-alexander:library:1.0.7'
+    compile project(':library')
+    // compile 'com.github.jd-alexander:library:1.0.7'
 
     compile "com.google.android.gms:play-services-location:8.1.0"
     compile 'com.android.support:cardview-v7:+'
