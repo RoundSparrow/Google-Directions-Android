@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
             progressDialog = ProgressDialog.show(this, "Please wait.",
                     "Fetching route information.", true);
             Routing routing = new Routing.Builder()
-                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .travelMode(AbstractRouting.TravelMode.TRANSIT)
                     .withListener(this)
                     .alternativeRoutes(true)
                     .waypoints(start, end)
@@ -488,19 +488,20 @@ public class MainActivity extends AppCompatActivity implements RoutingListener, 
     {
         if (progressDialog != null)
             progressDialog.dismiss();
+
         CameraUpdate center = CameraUpdateFactory.newLatLng(start);
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
 
         map.moveCamera(center);
 
-
-        if(polylines.size()>0) {
+        if (polylines.size()>0) {
             for (Polyline poly : polylines) {
                 poly.remove();
             }
         }
 
-        polylines = new ArrayList<>();
+        polylines.clear();
+
         //add route(s) to the map.
         for (int i = 0; i <route.size(); i++) {
 
